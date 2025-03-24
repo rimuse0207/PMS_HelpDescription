@@ -10,14 +10,11 @@ export const fetchDataSuccess = data => ({ type: FETCH_DATA_SUCCESS, payload: da
 export const fetchDataFailure = error => ({ type: FETCH_DATA_FAILURE, payload: error });
 
 export const MenuSidefetchData = () => {
-    console.log('실행');
     return async dispatch => {
-        console.log('111');
         dispatch(fetchDataRequest()); // 요청 시작
 
         try {
             const response = await Request_Get_Axios('/Ce_Route/Tools/Test_Test_Test'); // Axios API 호출
-            console.log(response);
             if (response.data) dispatch(fetchDataSuccess(response.data)); // 성공 시 데이터 저장
             else dispatch(fetchDataFailure('error'));
         } catch (error) {

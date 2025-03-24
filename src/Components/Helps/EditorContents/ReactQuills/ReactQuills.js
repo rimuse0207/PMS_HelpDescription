@@ -1,9 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import axios from 'axios';
+import ToolBars from './ToolBars';
+import Delta from 'quill-delta';
+import ImageResize from '@looop/quill-image-resize-module-react';
+import parse from 'html-react-parser';
+import { useDispatch, useSelector } from 'react-redux';
+import { Change_Menu_Contents_Editor_State } from '../../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 
-const fontSizeArr = ['8px', '9px', '10px', '12px', '14px', '16px', '20px', '24px', '32px', '42px', '54px', '68px', '84px', '98px'];
+const fontSizeArr = ['8px', '9px', '10px', '14px', '16px', '20px', '24px', '32px', '42px', '54px', '68px', '84px', '98px'];
 const SizeStyle = Quill.import('attributors/style/size');
 SizeStyle.whitelist = fontSizeArr;
 Quill.register(SizeStyle, true);
@@ -12,100 +18,79 @@ const Font = Quill.import('attributors/class/font');
 Font.whitelist = ['arial', 'buri', 'gangwon'];
 Quill.register(Font, true);
 
-const DEFAULT_FONT = 'arial';
-const DEFAULT_SIZE = '14px';
+Quill.register('modules/imageResize', ImageResize);
 
 const formats = [
     'font',
     'size',
-    'color',
-    'background',
     'bold',
     'italic',
     'underline',
     'strike',
     'blockquote',
     'list',
-    'bullet',
     'indent',
-    'link',
+    'color',
+    'background',
+    'align',
     'image',
+    'link',
 ];
 
 const ReactQuills = () => {
-    const [value, setValue] = useState('');
+    const dispatch = useDispatch();
+    const Editor_State = useSelector(state => state.MenuContentsEditorReducer.Editor_State);
+    // const [value, setValue] = useState('');
     const quillRef = useRef(null);
-    const lastFormat = useRef({ font: DEFAULT_FONT, size: DEFAULT_SIZE });
 
-    const QuillModules = {
-        toolbar: {
-            container: [
-                [{ font: [] }],
-                [{ size: fontSizeArr }],
-                [{ color: [] }, { background: [] }],
-                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-                ['link', 'image'],
-                ['clean'],
-            ],
-            handlers: {
-                image: () => {
-                    document.getElementById('quill-image-upload')?.click();
-                },
-                link: function () {
-                    const quill = this.quill;
-                    const range = quill.getSelection();
-                    if (!range) return;
+    const QuillModules = useMemo(() => {
+        return {
+            toolbar: {
+                container: '#toolbar',
+                handlers: {
+                    image: () => {
+                        document.getElementById('quill-image-upload')?.click();
+                    },
+                    link: function () {
+                        const quill = this.quill;
+                        const range = quill.getSelection();
+                        if (!range) return;
 
-                    const existingLink = quill.getFormat(range).link || '';
-                    const url = prompt('Enter the URL:', existingLink);
+                        const existingLink = quill.getFormat(range).link || '';
+                        const url = prompt('Enter the URL:', existingLink);
 
-                    if (url) {
-                        quill.format('link', url);
-                    } else {
-                        quill.format('link', false);
-                    }
+                        if (url) {
+                            quill.format('link', url);
+                        } else {
+                            quill.format('link', false);
+                        }
+                    },
                 },
             },
-        },
-    };
 
-    useEffect(() => {
-        const initializeQuill = () => {
-            if (quillRef.current) {
-                const quill = quillRef.current.getEditor();
-                if (!quill) return;
+            imageResize: {
+                modules: ['Resize', 'DisplaySize'],
+            },
+            history: {
+                delay: 3000,
+                maxStack: 100,
+                userOnly: true,
+            },
 
-                // 스크롤 위치 고정
-                quill.on('text-change', () => {
-                    const scrollTop = quill.root.scrollTop;
-                    quill.root.scrollTop = scrollTop; // 스크롤 고정
-                });
-
-                quill.on('selection-change', range => {
-                    if (range && range.index !== undefined) {
-                        const currentFormat = quill.getFormat(range.index);
-                        lastFormat.current = {
-                            font: currentFormat.font || lastFormat.current.font,
-                            size: currentFormat.size || lastFormat.current.size,
-                        };
-                    }
-                });
-
-                quill.on('editor-change', () => {
-                    setTimeout(() => {
-                        if (!quill.hasFocus()) {
-                            quill.focus();
-                        }
-                    }, 0);
-                });
-            }
+            clipboard: {
+                matchers: [
+                    [
+                        'P',
+                        (node, delta) => {
+                            // 기존 P 태그의 속성을 유지하면서 새 줄을 추가
+                            const previousFormat = quillRef.current?.getEditor()?.getFormat();
+                            return delta.compose(new Delta().retain(delta.length(), previousFormat));
+                        },
+                    ],
+                ],
+            },
         };
-
-        // Add a delay to initialize quill after the component has fully mounted
-        setTimeout(initializeQuill, 500);
     }, []);
-
     const handleImageUpload = async event => {
         const files = event.target.files;
         if (!files.length) return;
@@ -124,11 +109,11 @@ const ReactQuills = () => {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                console.log(response);
                 const imageUrl = `${process.env.REACT_APP_DB_HOST}/${response.data.url}`;
                 quill.insertEmbed(range.index, 'image', imageUrl);
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
+                alert('이미지 업로드 실패! IT팀에 문의바랍니다.');
             }
         });
 
@@ -136,19 +121,52 @@ const ReactQuills = () => {
         event.target.value = '';
     };
 
+    const HandleEnter = e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const quill = quillRef.current?.getEditor();
+            if (!quill) return;
+
+            const handleTextChange = (delta, oldDelta, source) => {
+                if (source !== 'user') return;
+
+                const selection = quill.getSelection();
+                if (!selection) return;
+
+                const [line, offset] = quill.getLine(selection.index);
+                if (!line) return;
+
+                const format = quill.getFormat(selection.index - 1); // 이전 줄 스타일 가져오기
+                quill.formatText(selection.index, 1, format); // 현재 줄에 적용
+            };
+
+            quill.on('text-change', handleTextChange);
+            return () => {
+                quill.off('text-change', handleTextChange);
+            };
+        }
+    };
+
     return (
         <div>
-            <ReactQuill
-                style={{ height: 'calc(100vh - 300px)', width: '100%' }}
-                ref={quillRef}
-                theme="snow"
-                value={value}
-                onChange={setValue}
-                placeholder="내용을 입력하세요."
-                modules={QuillModules}
-                formats={formats}
-            />
+            <ToolBars></ToolBars>
+            <div style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
+                <ReactQuill
+                    onKeyDown={e => HandleEnter(e)}
+                    style={{ width: '100%', background: '#fefefe' }}
+                    ref={quillRef}
+                    theme="snow"
+                    value={Editor_State}
+                    onChange={e => {
+                        dispatch(Change_Menu_Contents_Editor_State(e));
+                    }}
+                    placeholder="내용을 입력하세요."
+                    modules={QuillModules}
+                    formats={formats}
+                />
+            </div>
             <input type="file" id="quill-image-upload" multiple accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+            {/* <div style={{ padding: '30px' }}>{parse(Editor_State)}</div> */}
         </div>
     );
 };

@@ -33,3 +33,10 @@ code {
         top: 00px;
     }
 }
+
+.ql-tooltip {
+    left: 40px;
+}
+.ql-editor > p > img {
+    border: 1px solid gray;
+}

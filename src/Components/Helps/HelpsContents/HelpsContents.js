@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import FindParent from './FindParent';
 
 const HelpsContentsMainDivBox = styled.div`
     width: 100%;
@@ -8,14 +9,24 @@ const HelpsContentsMainDivBox = styled.div`
     overflow-y: auto;
     padding: 10px;
 `;
+const MenuContentsContainerDivBox = styled.div`
+    padding: 10px;
+    .Title_Group {
+        font-size: 2em;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+`;
 
 const HelpsContents = () => {
     const { Code, Title } = useParams();
     return (
         <HelpsContentsMainDivBox>
-            <div>{Code}</div>
-            <div>{Title}</div>
-            <div>Contents의 내용이 들어갑니다.</div>
+            <FindParent></FindParent>
+            <MenuContentsContainerDivBox>
+                <h2 className="Title_Group">{Title}</h2>
+                <div>Contents의 내용이 들어갑니다.</div>
+            </MenuContentsContainerDivBox>
         </HelpsContentsMainDivBox>
     );
 };

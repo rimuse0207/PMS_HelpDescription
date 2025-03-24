@@ -17,8 +17,8 @@ const HelpsMainPage = () => {
             <TopNavigationMainPage></TopNavigationMainPage>
             <div className="HelpsFlexDivContainer">
                 <SideNavigationMainPage clickAccess={true}></SideNavigationMainPage>
-                {/* <HelpsContents></HelpsContents> */}
-                <EditorContentsMainPage></EditorContentsMainPage>
+                <HelpsContents></HelpsContents>
+                {/* <EditorContentsMainPage></EditorContentsMainPage> */}
             </div>
         </HelpsMainPageMainDivBox>
     );
