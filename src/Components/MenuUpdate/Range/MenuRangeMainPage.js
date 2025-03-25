@@ -60,6 +60,7 @@ const MenuRangeMainPage = () => {
         );
         if (Send_To_Server_For_Save_Menu_Switching.status) {
             dispatch(MenuSidefetchData());
+            setSelect_Menu(null);
             toast.show({
                 title: `정상적으로 메뉴 순서가 변경되었습니다.`,
                 successCheck: true,

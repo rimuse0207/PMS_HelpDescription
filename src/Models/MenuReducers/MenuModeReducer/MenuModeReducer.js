@@ -1,3 +1,4 @@
+import UpdateDefaultMode from '../../../Components/MenuUpdate/Contents/UpdateDefaultMode';
 import MenuUpdateContents from '../../../Components/MenuUpdate/MenuUpdateContents/MenuUpdateContents';
 import MenuRangeMainPage from '../../../Components/MenuUpdate/Range/MenuRangeMainPage';
 
@@ -16,7 +17,9 @@ const initialState = {
     Menu_Update_Mode: [
         {
             UpdateMode: 'Default',
-            Component: <div></div>,
+            Component: <MenuUpdateContents></MenuUpdateContents>,
+            Button_Name: ' 메 뉴 추 가 ',
+            Form_Name: '메뉴 추가 양식',
         },
         {
             UpdateMode: 'Insert',

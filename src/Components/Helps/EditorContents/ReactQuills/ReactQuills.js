@@ -5,7 +5,7 @@ import axios from 'axios';
 import ToolBars from './ToolBars';
 import Delta from 'quill-delta';
 import ImageResize from '@looop/quill-image-resize-module-react';
-import parse from 'html-react-parser';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { Change_Menu_Contents_Editor_State } from '../../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 
@@ -20,22 +20,7 @@ Quill.register(Font, true);
 
 Quill.register('modules/imageResize', ImageResize);
 
-const formats = [
-    'font',
-    'size',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'indent',
-    'color',
-    'background',
-    'align',
-    'image',
-    'link',
-];
+const formats = ['size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'indent', 'color', 'background', 'align', 'image', 'link'];
 
 const ReactQuills = () => {
     const dispatch = useDispatch();
@@ -109,7 +94,7 @@ const ReactQuills = () => {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                const imageUrl = `${process.env.REACT_APP_DB_HOST}/${response.data.url}`;
+                const imageUrl = `${process.env.REACT_APP_DB_HOST}/public/pms/${response.data.url}`;
                 quill.insertEmbed(range.index, 'image', imageUrl);
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
@@ -166,7 +151,6 @@ const ReactQuills = () => {
                 />
             </div>
             <input type="file" id="quill-image-upload" multiple accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
-            {/* <div style={{ padding: '30px' }}>{parse(Editor_State)}</div> */}
         </div>
     );
 };

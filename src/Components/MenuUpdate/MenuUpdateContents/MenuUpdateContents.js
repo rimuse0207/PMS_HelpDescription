@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Request_Get_Axios, Request_Post_Axios } from '../../../API';
 import { MdCheckBoxOutlineBlank } from 'react-icons/md';
@@ -58,6 +58,7 @@ export const MenuUpdateContentsMainDivBox = styled.div`
 `;
 
 const MenuUpdateContents = () => {
+    const Navigation = useNavigate();
     const dispatch = useDispatch();
     const { Mode, Code, parent_code, parent_name } = useParams();
     const UpdateMode = useSelector(state => state.Menu_Mode_Reducer.Menu_Update_Mode);
@@ -66,23 +67,7 @@ const MenuUpdateContents = () => {
     const Select_Options_State = useSelector(state => state.Menu_Add_Reducer.Select_Options);
     const Menu_Input_Menu_State = useSelector(state => state.Menu_Add_Reducer.Input_Menu);
     const [Select_Menu_List, setSelect_Menu_List] = useState([]);
-    const [AllChecked, setAllChecked] = useState(false);
-
-    const Get_Menu_Lists = async () => {
-        const Get_Menus = await Request_Get_Axios('/Pms_Route/MenuRouter/Test_Test_Test', {
-            Code,
-        });
-        setSelect_Menu_List(Get_Menus.data);
-    };
-
-    useEffect(() => {
-        Get_Menu_Lists();
-    }, [Code]);
-
-    // const OnClick_To_Select_Menu = Select_Menu => {
-    //     dispatch(Change_Select_Menu_Info_Func(Select_Menu));
-    // };
-
+    const [UpdateModes, setUpdateModes] = useState(false);
     const Handle_Menu_Add_Func = async () => {
         const Send_Server_For_Add_Menu_List = await Request_Post_Axios('/Pms_Route/MenuRouter/Add_Menu_List', {
             Now_Select_Menu,
@@ -101,11 +86,16 @@ const MenuUpdateContents = () => {
             } else {
                 // 정상 등록 완료
                 dispatch(MenuSidefetchData());
+                setUpdateModes(false);
+
                 toast.show({
                     title: `정상적으로 메뉴 등록이 완료되었습니다.`,
                     successCheck: true,
                     duration: 6000,
                 });
+                Navigation(
+                    `/admin/Menu/${Mode}/${Menu_Input_Menu_State.menu_code}/${Menu_Input_Menu_State.menu_name}/${Select_Options_State.menu_code}/${Select_Options_State.menu_name}`
+                );
             }
         } else {
             toast.show({
@@ -126,9 +116,16 @@ const MenuUpdateContents = () => {
         if (Send_Server_For_Change_Menu_Info.status) {
             // 정상 등록 완료
             dispatch(MenuSidefetchData());
+            setUpdateModes(false);
             toast.show({
                 title: `정상적으로 메뉴 변경이 완료되었습니다.`,
                 successCheck: true,
+                duration: 6000,
+            });
+        } else {
+            toast.show({
+                title: `메뉴 등록에 실패하였습니다. IT팀에 문의바랍니다.`,
+                successCheck: false,
                 duration: 6000,
             });
         }
@@ -180,14 +177,21 @@ const MenuUpdateContents = () => {
                     </tbody>
                 </table>
             </div>
-            <MenuAddInputs></MenuAddInputs>
+            <MenuAddInputs UpdateModes={UpdateModes}></MenuAddInputs>
 
             <ul>
-                <li style={{ textAlign: 'end', marginTop: '20px' }}>
-                    <FuncButton onClick={() => Change_Form_Event_Open()}>
-                        {UpdateMode.map(list => (list.UpdateMode === Mode ? list.Button_Name : ''))}
-                    </FuncButton>
-                </li>
+                {UpdateModes ? (
+                    <li style={{ textAlign: 'end', marginTop: '20px' }}>
+                        <FuncButton onClick={() => setUpdateModes(false)}> 취 소 </FuncButton>
+                        <FuncButton onClick={() => Change_Form_Event_Open()}>
+                            {UpdateMode.map(list => (list.UpdateMode === Mode ? list.Button_Name : ''))}
+                        </FuncButton>
+                    </li>
+                ) : (
+                    <li style={{ textAlign: 'end', marginTop: '20px' }}>
+                        <FuncButton onClick={() => setUpdateModes(true)}>수 정 모 드 변 경</FuncButton>
+                    </li>
+                )}
             </ul>
         </MenuUpdateContentsMainDivBox>
     );

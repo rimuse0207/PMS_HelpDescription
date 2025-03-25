@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaHome } from 'react-icons/fa';
 import { GiHamburgerMenu } from 'react-icons/gi';
@@ -6,7 +6,16 @@ import { FaCaretUp, FaCaretDown } from 'react-icons/fa';
 import { IoSearch } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { Change_Side_Menu_Func } from '../../../Models/MenuReducers/SideMenuReducer/SideMenuReducer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { findNextState, findPrevState, openMenusToTarget } from '../SideNavigation/TreeMenu/TreeFunction';
+import { MdMailOutline } from 'react-icons/md';
+import { fetchDataSuccess } from '../../../Models/ReduxThunks/MenuReduxThunks/SideMenuListReducerThunks';
+import { Request_Get_Axios } from '../../../API';
+import { Change_Search_Menu_Contents_State } from '../../../Models/MenuReducers/MenuSearchReducer/MenuSearchReducer';
+import MailSendModal from '../../Modal/MailSendModal';
+import { Initial_Menu_Contents_Editor_State } from '../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
+import { toast } from '../../../ToastMessage/ToastManager';
+
 const TopNavigationMainPageMainDivBox = styled.div`
     height: 64px;
     background: #3d4647;
@@ -277,15 +286,74 @@ const TopNavigationMainPageMainDivBox = styled.div`
 `;
 
 const TopNavigationMainPage = () => {
+    const { Code, Mode } = useParams();
+    const TreeMenu = useSelector(state => state.SideMenuListReducerThunks.data);
     const Navigation = useNavigate();
     const dispatch = useDispatch();
+    const [Search_Input, setSearch_Input] = useState('');
+    const [OpenMailSendModdal, setOpenMailSendModdal] = useState(false);
+
     const HandleChangeMenu = () => {
         dispatch(Change_Side_Menu_Func());
     };
 
     const HandleMoveToHome = () => {
-        Navigation('/Home/Helps');
+        Navigation('/Home/Helps/TOP/TOP/TOP/TOP');
     };
+
+    const HandleChangeTopButton = () => {
+        if (Mode !== 'Helps') {
+            toast.show({
+                title: `해당 메뉴는 조회시에만 사용 가능합니다.`,
+                successCheck: false,
+                duration: 6000,
+            });
+            return;
+        }
+        const Pre_State = findPrevState(TreeMenu, Code);
+        const Change_Datas = openMenusToTarget(TreeMenu, Pre_State.menu_code);
+        dispatch(fetchDataSuccess(Change_Datas));
+        Navigation(
+            `/Home/${Mode}/${Pre_State.menu_code}/${Pre_State.menu_name}/${Pre_State.menu_parent_code}/${Pre_State.menu_parent_name}`
+        );
+    };
+    const HandleChangeDownButton = () => {
+        if (Mode !== 'Helps') {
+            toast.show({
+                title: `해당 메뉴는 조회시에만 사용 가능합니다.`,
+                successCheck: false,
+                duration: 6000,
+            });
+            return;
+        }
+        const Next_State = findNextState(TreeMenu, Code);
+        const Change_Datas = openMenusToTarget(TreeMenu, Next_State.menu_code);
+        dispatch(fetchDataSuccess(Change_Datas));
+        Navigation(
+            `/Home/${Mode}/${Next_State.menu_code}/${Next_State.menu_name}/${Next_State.menu_parent_code}/${Next_State.menu_parent_name}`
+        );
+    };
+
+    const HandleSubmitForSearch = async e => {
+        e.preventDefault();
+        const Send_To_Server_For_Search_Datas_Axios = await Request_Get_Axios('/Pms_Route/MenuRouter/Send_To_Server_For_Search_Datas', {
+            Search_Input,
+        });
+        if (Send_To_Server_For_Search_Datas_Axios.status) {
+            const Change_Data = Send_To_Server_For_Search_Datas_Axios.data.map(list => {
+                return {
+                    ...list,
+                    pms_content_info_content: list.pms_content_info_content
+                        ?.replaceAll(Search_Input.toLowerCase(), `<span class="highlight">${Search_Input}</span>`)
+                        ?.replaceAll(Search_Input.toUpperCase(), `<span class="highlight">${Search_Input}</span>`)
+                        .replaceAll('<br>', ''),
+                };
+            });
+            dispatch(Change_Search_Menu_Contents_State(Change_Data));
+            Navigation(`/Home/Search/${Search_Input}`);
+        }
+    };
+
     return (
         <TopNavigationMainPageMainDivBox>
             <table className="ww_skin_toolbar">
@@ -313,17 +381,36 @@ const TopNavigationMainPage = () => {
                                         </i>
                                     </a>
                                 </span>
-                                <span className="ww_skin_toolbar_button_right ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled">
+                                <span
+                                    className="ww_skin_toolbar_button_right ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled"
+                                    onClick={() => HandleChangeTopButton()}
+                                >
                                     <a className="ww_behavior_prev ww_skin ww_skin_button ww_skin_prev">
                                         <i className="fa">
                                             <FaCaretUp />
                                         </i>
                                     </a>
                                 </span>
-                                <span className="ww_skin_toolbar_button_right ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled">
+                                <span
+                                    className="ww_skin_toolbar_button_right ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled"
+                                    onClick={() => HandleChangeDownButton()}
+                                >
                                     <a className="ww_behavior_next ww_skin ww_skin_button ww_skin_next">
                                         <i className="fa">
                                             <FaCaretDown />
+                                        </i>
+                                    </a>
+                                </span>
+                                <span
+                                    className="ww_skin_toolbar_button_right ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled"
+                                    onClick={() => {
+                                        dispatch(Initial_Menu_Contents_Editor_State());
+                                        setOpenMailSendModdal(true);
+                                    }}
+                                >
+                                    <a className="ww_behavior_next ww_skin ww_skin_button ww_skin_next">
+                                        <i className="fa">
+                                            <MdMailOutline />
                                         </i>
                                     </a>
                                 </span>
@@ -331,7 +418,7 @@ const TopNavigationMainPage = () => {
                         </td>
 
                         <td className="ww_skin_toolbar_cluster ww_skin_toolbar_cluster_search">
-                            <form className="ww_skin_search_form">
+                            <form className="ww_skin_search_form" onSubmit={e => HandleSubmitForSearch(e)}>
                                 <span className="ww_skin_toolbar_button_left ww_skin_toolbar_background_default ww_skin_toolbar_button_enabled ww_skin_search_form_inner ww_skin_toolbar_right_background">
                                     <table className="ww_skin_search_table">
                                         <tbody>
@@ -341,7 +428,13 @@ const TopNavigationMainPage = () => {
                                                     className="ww_skin_search_scope_container selector_options_closed"
                                                 ></td>
                                                 <td id="search_input_container" className="ww_skin_search_input_container">
-                                                    <input id="search_input" className="ww_skin_search_input"></input>
+                                                    <input
+                                                        id="search_input"
+                                                        className="ww_skin_search_input"
+                                                        value={Search_Input}
+                                                        style={{ paddingLeft: '10px' }}
+                                                        onChange={e => setSearch_Input(e.target.value)}
+                                                    ></input>
                                                 </td>
                                                 <td className="ww_skin_search_button_container_outer">
                                                     <div className="ww_skin_search_button_container_inner">
@@ -368,6 +461,11 @@ const TopNavigationMainPage = () => {
                     </tr>
                 </tbody>
             </table>
+            {OpenMailSendModdal ? (
+                <MailSendModal isOpen={OpenMailSendModdal} onClose={() => setOpenMailSendModdal(false)}></MailSendModal>
+            ) : (
+                <></>
+            )}
         </TopNavigationMainPageMainDivBox>
     );
 };

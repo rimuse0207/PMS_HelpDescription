@@ -6,11 +6,11 @@ const ToolBars = () => {
         <div>
             <div id="toolbar">
                 <span className="ql-formats">
-                    <select className="ql-font" defaultValue="arial">
+                    {/* <select className="ql-font" defaultValue="arial">
                         <option value="arial">Arial</option>
                         <option value="buri">Buri</option>
                         <option value="gangwon">Gangwon</option>
-                    </select>
+                    </select> */}
                     <select className="ql-size" defaultValue="10px">
                         {fontSizeArr.map(list => {
                             return (
@@ -26,10 +26,9 @@ const ToolBars = () => {
                     <button className="ql-italic" />
                     <button className="ql-underline" />
                     <button className="ql-strike" />
-                    <button className="ql-blockquote" />
                 </span>
                 <span className="ql-formats">
-                    <button className="ql-list" value="ordered" />
+                    {/* <button className="ql-list" value="ordered" /> */}
                     <button className="ql-indent" value="-1" />
                     <button className="ql-indent" value="+1" />
                 </span>

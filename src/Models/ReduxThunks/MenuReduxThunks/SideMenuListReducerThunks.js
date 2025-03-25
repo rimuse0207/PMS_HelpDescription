@@ -14,7 +14,8 @@ export const MenuSidefetchData = () => {
         dispatch(fetchDataRequest()); // 요청 시작
 
         try {
-            const response = await Request_Get_Axios('/Ce_Route/Tools/Test_Test_Test'); // Axios API 호출
+            const response = await Request_Get_Axios('/Pms_Route/MenuRouter/Test_Test_Test'); // Axios API 호출
+            console.log(response);
             if (response.data) dispatch(fetchDataSuccess(response.data)); // 성공 시 데이터 저장
             else dispatch(fetchDataFailure('error'));
         } catch (error) {

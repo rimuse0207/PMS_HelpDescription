@@ -53,7 +53,7 @@ export const InputType = styled.input`
     }
 `;
 
-const MenuAddInputs = () => {
+const MenuAddInputs = ({ UpdateModes }) => {
     const dispatch = useDispatch();
     const { Mode, Code, Title, parent_code, parent_name } = useParams();
     const Navigation = useNavigate();
@@ -133,13 +133,14 @@ const MenuAddInputs = () => {
 
     /// Select_Option 선택 시, State변경
     const handleChangeData = e => {
+        console.log(e);
         if (Mode === 'Update') {
             console.log(e, Select_Options);
             dispatch(Change_Select_Options_Info_Func(e));
         } else if (Mode === 'Insert') {
             dispatch(Change_Select_Options_Info_Func(e));
-            Navigation(`/admin/Menu/${Mode}/${e.menu_code}/${e.menu_name}${e.menu_parent_code}/${e.menu_parent_name}`);
             dispatch(Change_Side_Menu_Select_Actions(e));
+            Navigation(`/admin/Menu/${Mode}/${e.menu_code}/${e.menu_name}/${e.menu_parent_code}/${e.menu_parent_name}`);
         }
     };
 
@@ -163,15 +164,19 @@ const MenuAddInputs = () => {
                     <div className="Input_Title">부모 메뉴코드*</div>
                     <div className="Input_Group_Container">
                         {/* <InputType type="text" placeholder="부모코드는 선택 해 주세요."></InputType> */}
-                        <Select
-                            value={Now_Select_Options_State ? Now_Select_Options_State : null}
-                            onChange={e => handleChangeData(e)}
-                            name="colors"
-                            options={Select_Options}
-                            className="basic-multi-select"
-                            classNamePrefix="하위 메뉴 등록을 위해 선택 해 주세요."
-                            placeholder="하위 메뉴 등록을 위해 선택 해 주세요."
-                        />
+                        {UpdateModes ? (
+                            <Select
+                                value={Now_Select_Options_State ? Now_Select_Options_State : null}
+                                onChange={e => handleChangeData(e)}
+                                name="colors"
+                                options={Select_Options}
+                                className="basic-multi-select"
+                                classNamePrefix="하위 메뉴 등록을 위해 선택 해 주세요."
+                                placeholder="하위 메뉴 등록을 위해 선택 해 주세요."
+                            />
+                        ) : (
+                            <div>{parent_code}</div>
+                        )}
                     </div>
                 </div>
                 <div className="Input_Container">
@@ -183,7 +188,7 @@ const MenuAddInputs = () => {
                     <div className="Input_Title">메뉴코드*</div>
                     {Mode === 'Update' ? (
                         <div className="Input_Group_Container">{Code}</div>
-                    ) : (
+                    ) : UpdateModes ? (
                         <div className="Input_Group_Container">
                             <InputType
                                 type="text"
@@ -199,42 +204,32 @@ const MenuAddInputs = () => {
                                 }}
                             ></InputType>
                         </div>
+                    ) : (
+                        <div className="Input_Group_Container">{Code}</div>
                     )}
                 </div>
                 <div className="Input_Container">
                     <div className="Input_Title">메뉴명*</div>
                     <div className="Input_Group_Container">
-                        <InputType
-                            type="text"
-                            placeholder="메뉴명을 작성 해 주세요."
-                            value={Now_Input_Menu?.menu_name}
-                            onChange={e => {
-                                dispatch(
-                                    Change_Input_Menu_Info_Func({
-                                        ...Now_Input_Menu,
-                                        menu_name: e.target.value,
-                                    })
-                                );
-                            }}
-                        ></InputType>
+                        {UpdateModes ? (
+                            <InputType
+                                type="text"
+                                placeholder="메뉴명을 작성 해 주세요."
+                                value={Now_Input_Menu?.menu_name}
+                                onChange={e => {
+                                    dispatch(
+                                        Change_Input_Menu_Info_Func({
+                                            ...Now_Input_Menu,
+                                            menu_name: e.target.value,
+                                        })
+                                    );
+                                }}
+                            ></InputType>
+                        ) : (
+                            <div>{Title}</div>
+                        )}
                     </div>
                 </div>
-                {/* <div className="Input_Container">
-                <div className="Input_Title">순서*</div>
-                <div className="Input_Group_Container">
-                    <InputType
-                        type="number"
-                        placeholder="순서를 적어주세요."
-                        value={Add_Menu_Info.menu_range}
-                        onChange={e =>
-                            setAdd_Menu_Info({
-                                ...Add_Menu_Info,
-                                menu_range: e.target.value,
-                            })
-                        }
-                    ></InputType>
-                </div>
-            </div> */}
             </MenuAddInputsMainDivBox>
         </div>
     );

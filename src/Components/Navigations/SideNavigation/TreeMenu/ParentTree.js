@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tree from './Tree';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchDataSuccess } from '../../../../Models/ReduxThunks/MenuReduxThunks/SideMenuListReducerThunks';
+import { openMenusToTarget } from './TreeFunction';
 
 export const SbContainer = styled.div`
-    min-width: 16rem;
     width: auto;
     height: auto;
     min-height: 70vh;
     font-size: 14px;
 `;
-
-// // 제일 하위메뉴에서 클릭할 Link
-// export const SbLink = styled(Link)`
-//     color: inherit;
-//     text-decoration: inherit;
-// `;
 
 const ParentTree = ({ TreeMenu, clickAccess }) => {
     return (
