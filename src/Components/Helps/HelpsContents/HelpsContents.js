@@ -82,7 +82,7 @@ const HelpsContents = () => {
         <HelpsContentsMainDivBox>
             <FindParent></FindParent>
             <MenuContentsContainerDivBox>
-                <h2 className="Title_Group">{Title}</h2>
+                <h2 className="Title_Group">{Title === 'TOP' ? 'PMS 도움말' : Title}</h2>
                 {Content_State.map(list => {
                     return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content)}</div>;
                 })}
