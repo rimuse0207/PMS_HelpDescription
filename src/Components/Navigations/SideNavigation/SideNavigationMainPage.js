@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ParentTree from './TreeMenu/ParentTree';
-import { Request_Get_Axios } from '../../../API/index';
+import { Request_Get_Axios, Request_Post_Axios } from '../../../API/index';
 import styled, { keyframes } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MenuSidefetchData } from '../../../Models/ReduxThunks/MenuReduxThunks/SideMenuListReducerThunks';
 import { toast } from '../../../ToastMessage/ToastManager';
 import { Logout_Inistate_State_Func } from '../../../Models/LoginReducers/LoginInfoReduce';
+import DeleteConfrimModal from '../../Modal/DeleteConfrimModal';
 
 // 애니메이션: 메뉴가 나타날 때와 사라질 때
 const fadeIn = keyframes`
@@ -78,6 +79,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
     const Side_Menu_Toggle = useSelector(state => state.Change_Side_Menus_Reducer.Side_Menu);
     const TreeMenu = useSelector(state => state.SideMenuListReducerThunks.data);
     const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
+    const [Delete_Confirm_Modal_Open, setDelete_Confirm_Modal_Open] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
@@ -100,6 +102,32 @@ const SideNavigationMainPage = ({ clickAccess }) => {
         }
     };
 
+    const Handle_Delete_Menu = () => {
+        if (Code === 'TOP') {
+            return toast.show({
+                title: `TOP메뉴는 삭제가 불가합니다.`,
+                successCheck: false,
+                duration: 6000,
+            });
+        }
+        setDelete_Confirm_Modal_Open(true);
+    };
+    const OnConfirm = async () => {
+        const Send_To_Server_For_Delete_Side_Menu = await Request_Post_Axios('/Pms_Route/MenuRouter/Send_To_Server_For_Delete_Side_Menu', {
+            Code,
+        });
+        if (Send_To_Server_For_Delete_Side_Menu.status) {
+            setDelete_Confirm_Modal_Open(false);
+            toast.show({
+                title: `삭제 처리가 완료되었습니다.`,
+                successCheck: true,
+                duration: 6000,
+            });
+
+            Navigation(`/admin/Menu/Default/TOP/TOP/TOP/TOP`);
+        }
+    };
+
     const Admin_Contents = () => {
         if (Login_Info_State) {
             if (Login_Info_State.id) {
@@ -109,6 +137,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
                             <FuncButton onClick={() => Open_Menu_Add('Insert')}> 추 가 </FuncButton>
                             <FuncButton onClick={() => Open_Menu_Add('Update')}> 수 정 </FuncButton>
                             <FuncButton onClick={() => Open_Menu_Add('Switch')}> 순서변경 </FuncButton>
+                            <FuncButton onClick={() => Handle_Delete_Menu()}> 삭제 </FuncButton>
                         </div>
                     ) : (
                         <></>
@@ -149,11 +178,20 @@ const SideNavigationMainPage = ({ clickAccess }) => {
     };
 
     return (
-        <SideNavigationMainPageMainDivBox show={Side_Menu_Toggle} isInitialized={isInitialized}>
-            {!clickAccess ? Admin_Contents() : Amdin_Menu_Update()}
+        <div>
+            <SideNavigationMainPageMainDivBox show={Side_Menu_Toggle} isInitialized={isInitialized}>
+                {!clickAccess ? Admin_Contents() : Amdin_Menu_Update()}
 
-            <ParentTree TreeMenu={TreeMenu} clickAccess={clickAccess}></ParentTree>
-        </SideNavigationMainPageMainDivBox>
+                <ParentTree TreeMenu={TreeMenu} clickAccess={clickAccess}></ParentTree>
+            </SideNavigationMainPageMainDivBox>
+            <DeleteConfrimModal
+                isOpen={Delete_Confirm_Modal_Open}
+                onClose={() => setDelete_Confirm_Modal_Open(false)}
+                onConfirm={() => OnConfirm()}
+                onMessage={'정말로 삭제 처리 하시겠습니까?'}
+                onSubMessage={'삭제 시, 하위 메뉴 및 컨텐츠가 전부 삭제 됩니다.'}
+            ></DeleteConfrimModal>
+        </div>
     );
 };
 
