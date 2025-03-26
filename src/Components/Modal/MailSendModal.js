@@ -26,7 +26,8 @@ const Modal = styled.div`
     padding: 20px;
     border-radius: 10px;
     min-width: 520px;
-
+    height: 80%;
+    overflow: auto;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease-in-out;
     color: black;
@@ -142,7 +143,7 @@ const MailSendModal = ({ isOpen, onClose }) => {
                         />
                     </div>
                 </div>
-                <ReactQuills></ReactQuills>
+                <ReactQuills setHeight="50vh"></ReactQuills>
                 <ButtonContainer>
                     <ConfirmButton onClick={onConfirm}> 메 일 전 송 </ConfirmButton>
                     <CancelButton onClick={() => HandleCancle()}> 취 소 </CancelButton>

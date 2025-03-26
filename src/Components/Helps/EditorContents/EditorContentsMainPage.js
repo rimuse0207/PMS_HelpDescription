@@ -13,6 +13,7 @@ const EditorContentsMainPageMainDivBox = styled.div`
     width: 100%;
 `;
 const EditorContentsMainPage = () => {
+    const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const dispatch = useDispatch();
     const { Code, Title, parent_code, parent_name } = useParams();
     const Navigation = useNavigate();
@@ -25,7 +26,7 @@ const EditorContentsMainPage = () => {
     const Get_Content_Info = async () => {
         if (Code) {
             const Get_Content_Info_Axios = await Request_Get_Axios('/Pms_Route/MenuRouter/Get_Content_Info', { Code });
-            if (Get_Content_Info_Axios.status || Get_Content_Info_Axios.data.length > 0) {
+            if (Get_Content_Info_Axios.status || Get_Content_Info_Axios?.data?.length > 0) {
                 dispatch(Change_Menu_Contents_Editor_State(Get_Content_Info_Axios.data[0]?.pms_content_info_content));
             }
         }
@@ -35,6 +36,7 @@ const EditorContentsMainPage = () => {
         const Send_To_Editor_State_For_Save_Axios = await Request_Post_Axios('/Pms_Route/MenuRouter/Send_To_Editor_State_For_Saving', {
             Editor_State,
             Code,
+            Login_Info_State,
         });
         if (Send_To_Editor_State_For_Save_Axios.status) {
             toast.show({
@@ -48,7 +50,7 @@ const EditorContentsMainPage = () => {
 
     return (
         <EditorContentsMainPageMainDivBox>
-            <ReactQuills></ReactQuills>
+            <ReactQuills setHeight={'calc(100vh - 200px)'}></ReactQuills>
             <div style={{ marginRight: '50px', marginTop: '30px', paddingBottom: '30px', textAlign: 'end' }}>
                 <FuncButton onClick={() => HandleSaveEditor()}> 저 장 </FuncButton>
             </div>

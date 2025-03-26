@@ -22,7 +22,7 @@ Quill.register('modules/imageResize', ImageResize);
 
 const formats = ['size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'indent', 'color', 'background', 'align', 'image', 'link'];
 
-const ReactQuills = () => {
+const ReactQuills = ({ setHeight }) => {
     const dispatch = useDispatch();
     const Editor_State = useSelector(state => state.MenuContentsEditorReducer.Editor_State);
     // const [value, setValue] = useState('');
@@ -135,7 +135,7 @@ const ReactQuills = () => {
     return (
         <div>
             <ToolBars></ToolBars>
-            <div style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
+            <div style={{ height: setHeight, overflow: 'auto' }}>
                 <ReactQuill
                     onKeyDown={e => HandleEnter(e)}
                     style={{ width: '100%', background: '#fefefe' }}
