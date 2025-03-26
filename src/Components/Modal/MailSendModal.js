@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Initial_Menu_Contents_Editor_State } from '../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 import Select from 'react-select';
 import { Request_Get_Axios, Request_Post_Axios } from '../../API';
+import { toast } from '../../ToastMessage/ToastManager';
 
 // Styled Components
 const Overlay = styled.div`
@@ -94,11 +95,16 @@ const MailSendModal = ({ isOpen, onClose }) => {
             Content_State,
         });
         if (Send_To_Mail_From_Client.status) {
-            console.log(Send_To_Mail_From_Client);
+            dispatch(Initial_Menu_Contents_Editor_State());
+            onClose();
+            toast.show({
+                title: `정상적으로 메일 발송이 되었습니다..`,
+                successCheck: true,
+                duration: 6000,
+            });
         }
     };
     const HandleCancle = () => {
-        console.log('취소');
         onClose();
     };
 

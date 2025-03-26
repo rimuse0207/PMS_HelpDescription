@@ -6,13 +6,12 @@ import { MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { MdCheckBox } from 'react-icons/md';
 import MenuAddInputs from '../MenuAddInputs/MenuAddInputs';
 import { useDispatch, useSelector } from 'react-redux';
-import { Change_Select_Menu_Info_Func } from '../../../Models/MenuReducers/MenuAddReducer/MenuAddReducer';
+import { Change_Input_Menu_Info_Func, Change_Select_Menu_Info_Func } from '../../../Models/MenuReducers/MenuAddReducer/MenuAddReducer';
 import { FuncButton } from '../../Navigations/SideNavigation/SideNavigationMainPage';
 import { toast } from '../../../ToastMessage/ToastManager';
 import { MenuSidefetchData } from '../../../Models/ReduxThunks/MenuReduxThunks/SideMenuListReducerThunks';
 
 export const MenuUpdateContentsMainDivBox = styled.div`
-    border: 1px solid black;
     padding: 10px;
     width: 100%;
     table {
@@ -86,6 +85,15 @@ const MenuUpdateContents = () => {
             } else {
                 // 정상 등록 완료
                 dispatch(MenuSidefetchData());
+                dispatch(
+                    Change_Input_Menu_Info_Func({
+                        menu_code: null,
+                        menu_name: null,
+                        menu_parent_code: null,
+                        menu_parent_name: null,
+                        menu_range: 0,
+                    })
+                );
                 setUpdateModes(false);
 
                 toast.show({

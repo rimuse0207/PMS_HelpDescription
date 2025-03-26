@@ -160,7 +160,6 @@ const LoginMainPage = () => {
 
         if (Login_Check.status) {
             if (Login_Check.data) {
-                console.log(Login_Check);
                 localStorage.setItem('Token', Login_Check.data.CreateJWTToken.token);
                 localStorage.setItem('userId', Login_Check.data.userId);
                 dispatch(
@@ -191,7 +190,6 @@ const LoginMainPage = () => {
                         <div className="login-form-right-side">
                             <div className="top-logo-wrap"></div>
                             <h1>PMS 도움말</h1>
-                            {/* <p>* 업무포탈 아이디와 비밀번호가 공유 됩니다.</p> */}
                         </div>
                         <div className="login-form-left-side">
                             <form onSubmit={e => handleClicksLogin(e)}>

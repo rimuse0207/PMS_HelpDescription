@@ -45,7 +45,6 @@ const MenuRangeMainPage = () => {
 
     const Send_To_Server_For_Menu_Lists_Func = async () => {
         const Send_To_Server_For_Menu_Lists = await Request_Get_Axios('/Pms_Route/MenuRouter/Send_To_Server_For_Menu_Lists', { Code });
-        console.log(Send_To_Server_For_Menu_Lists);
         if (Send_To_Server_For_Menu_Lists.status) {
             setMenu_Lists(Send_To_Server_For_Menu_Lists.data);
         }

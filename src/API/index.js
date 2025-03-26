@@ -39,7 +39,7 @@ export const Request_Post_Axios = async (path, data) => {
                     duration: 6000,
                 });
 
-                return (window.location.href = '/');
+                return (window.location.href = '/Home/Helps');
             } else {
                 //실패
                 toast.show({
@@ -76,7 +76,7 @@ export const Request_Get_Axios = async (path, params) => {
         const Post_Axios = await request.get(path, {
             params: params,
         });
-        console.log(Post_Axios);
+
         if (Post_Axios.status === 200) {
             //서버 전송 성공
             if (Post_Axios.data.status === 200) {
@@ -93,7 +93,7 @@ export const Request_Get_Axios = async (path, params) => {
                     successCheck: false,
                     duration: 6000,
                 });
-                return (window.location.href = '/');
+                return (window.location.href = '/Home/Helps');
             } else {
                 //실패
                 toast.show({

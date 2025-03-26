@@ -133,9 +133,7 @@ const MenuAddInputs = ({ UpdateModes }) => {
 
     /// Select_Option 선택 시, State변경
     const handleChangeData = e => {
-        console.log(e);
         if (Mode === 'Update') {
-            console.log(e, Select_Options);
             dispatch(Change_Select_Options_Info_Func(e));
         } else if (Mode === 'Insert') {
             dispatch(Change_Select_Options_Info_Func(e));
