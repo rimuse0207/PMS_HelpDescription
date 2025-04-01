@@ -83,9 +83,13 @@ const HelpsContents = () => {
             <FindParent></FindParent>
             <MenuContentsContainerDivBox>
                 <h2 className="Title_Group">{Title === 'TOP' ? 'PMS 도움말' : Title}</h2>
-                {Content_State.map(list => {
-                    return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content)}</div>;
-                })}
+                {Code === 'TOP' ? (
+                    <p>PMS 도움말 입니다.</p>
+                ) : (
+                    Content_State.map(list => {
+                        return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content)}</div>;
+                    })
+                )}
                 <div className="Lines"></div>
             </MenuContentsContainerDivBox>
         </HelpsContentsMainDivBox>
