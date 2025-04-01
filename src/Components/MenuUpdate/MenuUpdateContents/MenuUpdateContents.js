@@ -74,9 +74,9 @@ const MenuUpdateContents = () => {
             Menu_Input_Menu_State,
         });
 
-        if (!Menu_Input_Menu_State.menu_code) {
+        if (!Menu_Input_Menu_State.menu_code || !Menu_Input_Menu_State.menu_name) {
             toast.show({
-                title: `메뉴코드를 입력 해 주세요.`,
+                title: `메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
                 successCheck: false,
                 duration: 6000,
             });
