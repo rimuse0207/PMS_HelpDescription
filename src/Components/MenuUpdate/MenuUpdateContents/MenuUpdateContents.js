@@ -73,6 +73,15 @@ const MenuUpdateContents = () => {
             Select_Options_State,
             Menu_Input_Menu_State,
         });
+
+        if (!Menu_Input_Menu_State.menu_code) {
+            toast.show({
+                title: `메뉴코드를 입력 해 주세요.`,
+                successCheck: false,
+                duration: 6000,
+            });
+            return;
+        }
         if (Send_Server_For_Add_Menu_List.status) {
             if (Send_Server_For_Add_Menu_List.data.dupleChecking) {
                 // 메뉴코드 중복!
