@@ -130,6 +130,15 @@ const MenuUpdateContents = () => {
             Menu_Input_Menu_State,
             Code,
         });
+        if (!Select_Options_State.menu_code || !Menu_Input_Menu_State.menu_name) {
+            toast.show({
+                title: `부모 메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
+                successCheck: false,
+                duration: 6000,
+            });
+            return;
+        }
+
         if (Send_Server_For_Change_Menu_Info.status) {
             // 정상 등록 완료
             dispatch(MenuSidefetchData());
