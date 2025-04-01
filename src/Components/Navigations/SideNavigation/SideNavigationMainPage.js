@@ -123,7 +123,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
                 successCheck: true,
                 duration: 6000,
             });
-
+            MenuSidefetchData();
             Navigation(`/admin/Menu/Default/TOP/TOP/TOP/TOP`);
         }
     };
