@@ -17,7 +17,7 @@ const ParentTree = ({ TreeMenu, clickAccess }) => {
     return (
         <SbContainer>
             {TreeMenu.map((list, index) => {
-                return <Tree clickAccess={clickAccess} list={list} key={index}></Tree>;
+                return <Tree clickAccess={clickAccess} list={list} key={list.menu_code}></Tree>;
             })}
         </SbContainer>
     );
