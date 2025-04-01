@@ -68,12 +68,6 @@ const MenuUpdateContents = () => {
     const [Select_Menu_List, setSelect_Menu_List] = useState([]);
     const [UpdateModes, setUpdateModes] = useState(false);
     const Handle_Menu_Add_Func = async () => {
-        const Send_Server_For_Add_Menu_List = await Request_Post_Axios('/Pms_Route/MenuRouter/Add_Menu_List', {
-            Now_Select_Menu,
-            Select_Options_State,
-            Menu_Input_Menu_State,
-        });
-
         if (!Menu_Input_Menu_State.menu_code || !Menu_Input_Menu_State.menu_name) {
             return toast.show({
                 title: `메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
@@ -81,6 +75,12 @@ const MenuUpdateContents = () => {
                 duration: 6000,
             });
         } else {
+            const Send_Server_For_Add_Menu_List = await Request_Post_Axios('/Pms_Route/MenuRouter/Add_Menu_List', {
+                Now_Select_Menu,
+                Select_Options_State,
+                Menu_Input_Menu_State,
+            });
+
             if (Send_Server_For_Add_Menu_List.status) {
                 if (Send_Server_For_Add_Menu_List.data.dupleChecking) {
                     // 메뉴코드 중복!
@@ -124,12 +124,6 @@ const MenuUpdateContents = () => {
     };
 
     const Handle_Change_Menu_Info = async () => {
-        const Send_Server_For_Change_Menu_Info = await Request_Post_Axios('/Pms_Route/MenuRouter/Change_Menu_Info', {
-            Now_Select_Menu,
-            Select_Options_State,
-            Menu_Input_Menu_State,
-            Code,
-        });
         if (!Select_Options_State.menu_code || !Menu_Input_Menu_State.menu_name) {
             return toast.show({
                 title: `부모 메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
@@ -137,6 +131,12 @@ const MenuUpdateContents = () => {
                 duration: 6000,
             });
         } else {
+            const Send_Server_For_Change_Menu_Info = await Request_Post_Axios('/Pms_Route/MenuRouter/Change_Menu_Info', {
+                Now_Select_Menu,
+                Select_Options_State,
+                Menu_Input_Menu_State,
+                Code,
+            });
             if (Send_Server_For_Change_Menu_Info.status) {
                 // 정상 등록 완료
                 dispatch(MenuSidefetchData());
