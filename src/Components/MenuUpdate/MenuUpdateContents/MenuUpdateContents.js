@@ -75,51 +75,51 @@ const MenuUpdateContents = () => {
         });
 
         if (!Menu_Input_Menu_State.menu_code || !Menu_Input_Menu_State.menu_name) {
-            toast.show({
+            return toast.show({
                 title: `메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
                 successCheck: false,
                 duration: 6000,
             });
-            return;
-        }
-        if (Send_Server_For_Add_Menu_List.status) {
-            if (Send_Server_For_Add_Menu_List.data.dupleChecking) {
-                // 메뉴코드 중복!
+        } else {
+            if (Send_Server_For_Add_Menu_List.status) {
+                if (Send_Server_For_Add_Menu_List.data.dupleChecking) {
+                    // 메뉴코드 중복!
+                    toast.show({
+                        title: `메뉴코드가 중복됩니다. 메뉴코드를 수정 해 주세요.`,
+                        successCheck: false,
+                        duration: 6000,
+                    });
+                    return;
+                } else {
+                    // 정상 등록 완료
+                    dispatch(MenuSidefetchData());
+                    dispatch(
+                        Change_Input_Menu_Info_Func({
+                            menu_code: null,
+                            menu_name: null,
+                            menu_parent_code: null,
+                            menu_parent_name: null,
+                            menu_range: 0,
+                        })
+                    );
+                    setUpdateModes(false);
+
+                    toast.show({
+                        title: `정상적으로 메뉴 등록이 완료되었습니다.`,
+                        successCheck: true,
+                        duration: 6000,
+                    });
+                    Navigation(
+                        `/admin/Menu/${Mode}/${Menu_Input_Menu_State.menu_code}/${Menu_Input_Menu_State.menu_name}/${Select_Options_State.menu_code}/${Select_Options_State.menu_name}`
+                    );
+                }
+            } else {
                 toast.show({
-                    title: `메뉴코드가 중복됩니다. 메뉴코드를 수정 해 주세요.`,
+                    title: `메뉴 등록에 실패하였습니다. IT팀에 문의바랍니다.`,
                     successCheck: false,
                     duration: 6000,
                 });
-                return;
-            } else {
-                // 정상 등록 완료
-                dispatch(MenuSidefetchData());
-                dispatch(
-                    Change_Input_Menu_Info_Func({
-                        menu_code: null,
-                        menu_name: null,
-                        menu_parent_code: null,
-                        menu_parent_name: null,
-                        menu_range: 0,
-                    })
-                );
-                setUpdateModes(false);
-
-                toast.show({
-                    title: `정상적으로 메뉴 등록이 완료되었습니다.`,
-                    successCheck: true,
-                    duration: 6000,
-                });
-                Navigation(
-                    `/admin/Menu/${Mode}/${Menu_Input_Menu_State.menu_code}/${Menu_Input_Menu_State.menu_name}/${Select_Options_State.menu_code}/${Select_Options_State.menu_name}`
-                );
             }
-        } else {
-            toast.show({
-                title: `메뉴 등록에 실패하였습니다. IT팀에 문의바랍니다.`,
-                successCheck: false,
-                duration: 6000,
-            });
         }
     };
 
@@ -131,29 +131,28 @@ const MenuUpdateContents = () => {
             Code,
         });
         if (!Select_Options_State.menu_code || !Menu_Input_Menu_State.menu_name) {
-            toast.show({
+            return toast.show({
                 title: `부모 메뉴코드 또는 메뉴이름을 입력 해 주세요.`,
                 successCheck: false,
                 duration: 6000,
             });
-            return;
-        }
-
-        if (Send_Server_For_Change_Menu_Info.status) {
-            // 정상 등록 완료
-            dispatch(MenuSidefetchData());
-            setUpdateModes(false);
-            toast.show({
-                title: `정상적으로 메뉴 변경이 완료되었습니다.`,
-                successCheck: true,
-                duration: 6000,
-            });
         } else {
-            toast.show({
-                title: `메뉴 등록에 실패하였습니다. IT팀에 문의바랍니다.`,
-                successCheck: false,
-                duration: 6000,
-            });
+            if (Send_Server_For_Change_Menu_Info.status) {
+                // 정상 등록 완료
+                dispatch(MenuSidefetchData());
+                setUpdateModes(false);
+                toast.show({
+                    title: `정상적으로 메뉴 변경이 완료되었습니다.`,
+                    successCheck: true,
+                    duration: 6000,
+                });
+            } else {
+                toast.show({
+                    title: `메뉴 등록에 실패하였습니다. IT팀에 문의바랍니다.`,
+                    successCheck: false,
+                    duration: 6000,
+                });
+            }
         }
     };
 
