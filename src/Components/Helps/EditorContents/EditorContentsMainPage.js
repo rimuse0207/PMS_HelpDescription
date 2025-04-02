@@ -11,6 +11,15 @@ import { Change_Menu_Contents_Editor_State } from '../../../Models/MenuReducers/
 const EditorContentsMainPageMainDivBox = styled.div`
     height: calc(-70px + 100vh);
     width: 100%;
+    .Button_Move_To_TOP {
+        position: fixed;
+        top: 70px;
+        right: 50px;
+        width: 200px;
+        background-color: green;
+        font-weight: bolder;
+        color: white;
+    }
 `;
 const EditorContentsMainPage = () => {
     const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
@@ -52,7 +61,10 @@ const EditorContentsMainPage = () => {
         <EditorContentsMainPageMainDivBox>
             <ReactQuills setHeight={'calc(100vh - 200px)'}></ReactQuills>
             <div style={{ marginRight: '50px', marginTop: '30px', paddingBottom: '30px', textAlign: 'end' }}>
-                <FuncButton onClick={() => HandleSaveEditor()}> 저 장 </FuncButton>
+                <FuncButton className="Button_Move_To_TOP" onClick={() => HandleSaveEditor()}>
+                    {' '}
+                    저 장{' '}
+                </FuncButton>
             </div>
         </EditorContentsMainPageMainDivBox>
     );

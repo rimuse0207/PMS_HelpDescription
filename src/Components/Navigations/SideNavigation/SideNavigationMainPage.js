@@ -54,6 +54,9 @@ const SideNavigationMainPageMainDivBox = styled.div`
         margin-top: 5px;
         margin-bottom: 5px;
         text-align: end;
+        position: sticky;
+        top: 5px;
+        background: #fff;
     }
 `;
 

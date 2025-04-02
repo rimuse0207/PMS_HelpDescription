@@ -8,12 +8,13 @@ import ImageResize from '@looop/quill-image-resize-module-react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Change_Menu_Contents_Editor_State } from '../../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
+import QuillImageDropAndPaste from 'quill-image-drop-and-paste';
 
 const fontSizeArr = ['8px', '9px', '10px', '14px', '16px', '20px', '24px', '32px', '42px', '54px', '68px', '84px', '98px'];
 const SizeStyle = Quill.import('attributors/style/size');
 SizeStyle.whitelist = fontSizeArr;
 Quill.register(SizeStyle, true);
-
+Quill.register('modules/imageDropAndPaste', QuillImageDropAndPaste);
 const Font = Quill.import('attributors/class/font');
 Font.whitelist = ['arial', 'buri', 'gangwon'];
 Quill.register(Font, true);
@@ -25,8 +26,30 @@ const formats = ['size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 
 const ReactQuills = ({ setHeight }) => {
     const dispatch = useDispatch();
     const Editor_State = useSelector(state => state.MenuContentsEditorReducer.Editor_State);
-    // const [value, setValue] = useState('');
     const quillRef = useRef(null);
+
+    const imageHandler = async (imageDataUrl, type, imageData) => {
+        const file = imageData.toFile();
+        const formData = new FormData();
+
+        // append blob data
+        formData.append('image', file);
+
+        const quill = quillRef.current?.getEditor();
+        const range = quill.getSelection();
+        if (!quill) return;
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_DB_HOST}/Pms_Route/MenuRouter/Pms_Image_Upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            const imageUrl = `${process.env.REACT_APP_DB_HOST}/public/pms/${response.data.url}`;
+            quill.insertEmbed(range.index, 'image', imageUrl);
+        } catch (error) {
+            console.error('이미지 업로드 실패:', error);
+            alert('이미지 업로드 실패! IT팀에 문의바랍니다.');
+        }
+    };
 
     const QuillModules = useMemo(() => {
         return {
@@ -52,10 +75,14 @@ const ReactQuills = ({ setHeight }) => {
                     },
                 },
             },
-
+            imageDropAndPaste: {
+                // add an custom image handler
+                handler: imageHandler,
+            },
             imageResize: {
                 modules: ['Resize', 'DisplaySize'],
             },
+            // imageDrop: true,
             history: {
                 delay: 3000,
                 maxStack: 100,
@@ -76,6 +103,7 @@ const ReactQuills = ({ setHeight }) => {
             },
         };
     }, []);
+
     const handleImageUpload = async event => {
         const files = event.target.files;
         if (!files.length) return;
