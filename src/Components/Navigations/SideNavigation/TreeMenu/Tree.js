@@ -29,9 +29,10 @@ export const SbTitle = styled.div`
     display: flex;
     align-items: center;
     padding-left: ${props => props.depth * 20}px;
-    height: 32px;
+    min-height: 32px;
     color: gray;
     background-color: ${props => (props.NowChecked ? 'lightgray' : '')};
+    margin-bottom: 5px;
     &:hover {
         background-color: #f6f6f2;
         cursor: pointer;
