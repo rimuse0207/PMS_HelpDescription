@@ -12,10 +12,10 @@ import DeleteConfrimModal from '../../Modal/DeleteConfrimModal';
 // 애니메이션: 메뉴가 나타날 때와 사라질 때
 const fadeIn = keyframes`
   0% {
-    opacity: 0;
-    transform: translateX(-300px); /* 왼쪽에서부터 슬라이드 */
-    display:none;
-    width: 0px;
+    opacity: 1;
+    transform: translateX(0px); /* 왼쪽에서부터 슬라이드 */
+    display:block;
+    width: 300px;
   }
   100% {
     opacity: 1;
