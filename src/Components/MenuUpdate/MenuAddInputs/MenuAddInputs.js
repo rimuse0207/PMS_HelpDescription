@@ -71,6 +71,7 @@ const MenuAddInputs = ({ UpdateModes }) => {
     // 모드 변경 시, INPUT VALUE 삭제 처리
     useEffect(() => {
         if (Mode === 'Update') {
+            // 수정 작업 시
             Select_Change_State();
             dispatch(
                 Change_Input_Menu_Info_Func({
@@ -80,11 +81,11 @@ const MenuAddInputs = ({ UpdateModes }) => {
                 })
             );
         } else if (Mode === 'Insert') {
+            // 삽입 작업 시
             dispatch(
                 Change_Input_Menu_Info_Func({
                     ...Now_Input_Menu,
-                    menu_code: '',
-                    menu_name: '',
+                    menu_code: `${Side_Select_Menu.menu_code}`,
                 })
             );
         }
@@ -92,6 +93,7 @@ const MenuAddInputs = ({ UpdateModes }) => {
 
     useEffect(() => {
         if (Mode === 'Update') {
+            // 수정 작업 시
             dispatch(
                 Change_Input_Menu_Info_Func({
                     ...Now_Input_Menu,
@@ -99,11 +101,20 @@ const MenuAddInputs = ({ UpdateModes }) => {
                 })
             );
             Select_Change_State();
+        } else if (Mode === 'Insert') {
+            // 삽입 작업 시
+            dispatch(
+                Change_Input_Menu_Info_Func({
+                    ...Now_Input_Menu,
+                    menu_code: `${Side_Select_Menu.menu_code}`,
+                })
+            );
         }
     }, [Code]);
 
     useEffect(() => {
         if (Mode === 'Update') {
+            // 수정 작업 시
             Select_Change_State();
 
             dispatch(
@@ -116,7 +127,7 @@ const MenuAddInputs = ({ UpdateModes }) => {
             dispatch(
                 Change_Select_Options_Info_Func({
                     value: Side_Select_Menu.menu_code,
-                    label: `메뉴명 : ${Side_Select_Menu.menu_name}, 메뉴코드 : ${Side_Select_Menu.menu_code}`,
+                    label: `${Side_Select_Menu.menu_code}  _  ${Side_Select_Menu.menu_name} `,
                     ...Side_Select_Menu,
                 })
             );
@@ -138,6 +149,12 @@ const MenuAddInputs = ({ UpdateModes }) => {
         } else if (Mode === 'Insert') {
             dispatch(Change_Select_Options_Info_Func(e));
             dispatch(Change_Side_Menu_Select_Actions(e));
+            dispatch(
+                Change_Input_Menu_Info_Func({
+                    ...Now_Input_Menu,
+                    menu_code: `${e.menu_code}`,
+                })
+            );
             Navigation(`/admin/Menu/${Mode}/${e.menu_code}/${e.menu_name}/${e.menu_parent_code}/${e.menu_parent_name}`);
         }
     };

@@ -207,14 +207,28 @@ const MenuUpdateContents = () => {
             <ul>
                 {UpdateModes ? (
                     <li style={{ textAlign: 'end', marginTop: '20px' }}>
-                        <FuncButton onClick={() => setUpdateModes(false)}> 취 소 </FuncButton>
-                        <FuncButton onClick={() => Change_Form_Event_Open()}>
+                        <FuncButton
+                            onClick={() => setUpdateModes(false)}
+                            style={{ width: '200px', height: '40px', fontSize: '15px', fontWeight: 'bolder' }}
+                        >
+                            {' '}
+                            취 소{' '}
+                        </FuncButton>
+                        <FuncButton
+                            onClick={() => Change_Form_Event_Open()}
+                            style={{ width: '200px', height: '40px', fontSize: '15px', fontWeight: 'bolder' }}
+                        >
                             {UpdateMode.map(list => (list.UpdateMode === Mode ? list.Button_Name : ''))}
                         </FuncButton>
                     </li>
                 ) : (
                     <li style={{ textAlign: 'end', marginTop: '20px' }}>
-                        <FuncButton onClick={() => setUpdateModes(true)}>수 정 모 드 변 경</FuncButton>
+                        <FuncButton
+                            onClick={() => setUpdateModes(true)}
+                            style={{ width: '200px', height: '40px', fontSize: '15px', fontWeight: 'bolder' }}
+                        >
+                            {Mode === 'Insert' ? '추 가 모 드 변 경' : '수 정 모 드 변 경'}
+                        </FuncButton>
                     </li>
                 )}
             </ul>

@@ -14,11 +14,20 @@ const EditorContentsMainPageMainDivBox = styled.div`
     .Button_Move_To_TOP {
         position: fixed;
         top: 70px;
-        right: 50px;
+        right: 500px;
         width: 200px;
         background-color: green;
         font-weight: bolder;
         color: white;
+        @media (max-width: 1200px) {
+            right: 300px;
+        }
+        @media (max-width: 1000px) {
+            right: 200px;
+        }
+        @media (max-width: 800px) {
+            right: 100px;
+        }
     }
 `;
 const EditorContentsMainPage = () => {
