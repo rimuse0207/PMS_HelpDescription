@@ -87,7 +87,7 @@ const HelpsContents = () => {
                     <p>PMS 도움말 입니다.</p>
                 ) : (
                     Content_State.map(list => {
-                        return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content)}</div>;
+                        return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content.replaceAll('_blank', '_self'))}</div>;
                     })
                 )}
                 <div className="Lines"></div>

@@ -6,6 +6,7 @@ import SideMenuListReducerThunks from './ReduxThunks/MenuReduxThunks/SideMenuLis
 import MenuContentsEditorReducer from './MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 import Login_Info_Reducer_State from './LoginReducers/LoginInfoReduce';
 import MenuSearchReducer from './MenuReducers/MenuSearchReducer/MenuSearchReducer';
+import Change_Side_Menus_Width_Reducer from './MenuReducers/SideMenuWidthReducer/SideMenuWidthReducer';
 
 const rootReducer = combineReducers({
     Change_Side_Menus_Reducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     MenuContentsEditorReducer,
     Login_Info_Reducer_State,
     MenuSearchReducer,
+    Change_Side_Menus_Width_Reducer,
 });
 
 export default rootReducer;

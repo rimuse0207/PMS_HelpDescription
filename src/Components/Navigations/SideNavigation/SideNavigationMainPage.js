@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ParentTree from './TreeMenu/ParentTree';
 import { Request_Get_Axios, Request_Post_Axios } from '../../../API/index';
 import styled, { keyframes } from 'styled-components';
@@ -8,6 +8,7 @@ import { MenuSidefetchData } from '../../../Models/ReduxThunks/MenuReduxThunks/S
 import { toast } from '../../../ToastMessage/ToastManager';
 import { Logout_Inistate_State_Func } from '../../../Models/LoginReducers/LoginInfoReduce';
 import DeleteConfrimModal from '../../Modal/DeleteConfrimModal';
+import { Change_Side_Menu_Width_Func } from '../../../Models/MenuReducers/SideMenuWidthReducer/SideMenuWidthReducer';
 
 // 애니메이션: 메뉴가 나타날 때와 사라질 때
 const fadeIn = keyframes`
@@ -43,12 +44,12 @@ const fadeOut = keyframes`
 const SideNavigationMainPageMainDivBox = styled.div`
     border: 1px solid lightgray;
     height: calc(100vh - 80px);
-    width: 300px;
+    width: ${({ width }) => `${width}px`};
     overflow-y: auto;
     margin-top: 10px;
     padding-left: 10px;
     /* animation: ${props => (props.show ? fadeIn : fadeOut)} 0.3s ease-in forwards; */
-    animation: ${({ show, isInitialized }) => (isInitialized ? (show ? fadeIn : fadeOut) : 'none')} 0.3s ease-in forwards;
+    /* animation: ${({ show, isInitialized }) => (isInitialized ? (show ? fadeIn : fadeOut) : 'none')} 0.3s ease-in forwards; */
 
     .Button_Group {
         margin-top: 5px;
@@ -57,6 +58,26 @@ const SideNavigationMainPageMainDivBox = styled.div`
         position: sticky;
         top: 5px;
         background: #fff;
+    }
+`;
+
+const SideMenuMainContainers = styled.div`
+    position: relative;
+    .Move_Width_Cotaniner {
+        width: 15px;
+        height: 40px;
+        border: 1px solid lightgray;
+        position: absolute;
+        top: 45%;
+        right: -15px;
+        transform: translate(0, -45%);
+        z-index: 100;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-left: none;
+        &:hover {
+            cursor: w-resize;
+        }
     }
 `;
 
@@ -84,7 +105,9 @@ const SideNavigationMainPage = ({ clickAccess }) => {
     const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [Delete_Confirm_Modal_Open, setDelete_Confirm_Modal_Open] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
-
+    // const [WidthSize, setWidthSize] = useState(300);
+    const WidthSize = useSelector(state => state.Change_Side_Menus_Width_Reducer.Side_Menu_Width);
+    const isDragging = useRef(false);
     useEffect(() => {
         MenuSidefetchData();
         // 컴포넌트가 처음 렌더링될 때 애니메이션 적용 방지
@@ -180,13 +203,63 @@ const SideNavigationMainPage = ({ clickAccess }) => {
         }
     };
 
+    // const handleMouseDown = () => {
+    //     isDragging.current = true;
+    //     window.addEventListener('mousemove', handleMouseMove);
+    //     window.addEventListener('mouseup', handleMouseUp);
+    // };
+
+    // const handleMouseMove = e => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     if (!isDragging.current || !boxRef.current) return;
+
+    //     const left = boxRef.current.getBoundingClientRect().left;
+    //     const newWidth = e.clientX - left;
+    //     console.log(newWidth);
+    //     // 최소 200px, 최대 600px
+    //     if (newWidth >= 100 && newWidth <= 1000) {
+    //         setWidthSize(newWidth);
+    //     }
+    // };
+
+    // const handleMouseUp = () => {
+    //     console.log('mouseup: dragging 종료');
+    //     isDragging.current = false;
+    //     window.removeEventListener('mousemove', handleMouseMove);
+    //     window.removeEventListener('mouseup', handleMouseUp);
+    // };
+    const handleMouseDown = () => {
+        isDragging.current = true;
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseMove = e => {
+        if (!isDragging.current) return;
+        const newWidth = e.clientX;
+        if (newWidth >= 200 && newWidth <= 1000) {
+            // setWidthSize(newWidth);
+            dispatch(Change_Side_Menu_Width_Func(newWidth));
+        }
+    };
+
+    const handleMouseUp = () => {
+        if (isDragging.current) {
+            isDragging.current = false;
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+    };
+
     return (
-        <div>
-            <SideNavigationMainPageMainDivBox show={Side_Menu_Toggle} isInitialized={isInitialized}>
+        <SideMenuMainContainers className="Side_Menus_Container">
+            <SideNavigationMainPageMainDivBox show={Side_Menu_Toggle} isInitialized={isInitialized} width={WidthSize}>
                 {!clickAccess ? Admin_Contents() : Amdin_Menu_Update()}
 
                 <ParentTree TreeMenu={TreeMenu} clickAccess={clickAccess}></ParentTree>
             </SideNavigationMainPageMainDivBox>
+            <div className="Move_Width_Cotaniner" onMouseDown={handleMouseDown}></div>
             <DeleteConfrimModal
                 isOpen={Delete_Confirm_Modal_Open}
                 onClose={() => setDelete_Confirm_Modal_Open(false)}
@@ -194,7 +267,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
                 onMessage={'정말로 삭제 처리 하시겠습니까?'}
                 onSubMessage={'삭제 시, 하위 메뉴 및 컨텐츠가 전부 삭제 됩니다.'}
             ></DeleteConfrimModal>
-        </div>
+        </SideMenuMainContainers>
     );
 };
 
