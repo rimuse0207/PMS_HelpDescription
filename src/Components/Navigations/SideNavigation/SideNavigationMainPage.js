@@ -203,32 +203,6 @@ const SideNavigationMainPage = ({ clickAccess }) => {
         }
     };
 
-    // const handleMouseDown = () => {
-    //     isDragging.current = true;
-    //     window.addEventListener('mousemove', handleMouseMove);
-    //     window.addEventListener('mouseup', handleMouseUp);
-    // };
-
-    // const handleMouseMove = e => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    //     if (!isDragging.current || !boxRef.current) return;
-
-    //     const left = boxRef.current.getBoundingClientRect().left;
-    //     const newWidth = e.clientX - left;
-    //     console.log(newWidth);
-    //     // 최소 200px, 최대 600px
-    //     if (newWidth >= 100 && newWidth <= 1000) {
-    //         setWidthSize(newWidth);
-    //     }
-    // };
-
-    // const handleMouseUp = () => {
-    //     console.log('mouseup: dragging 종료');
-    //     isDragging.current = false;
-    //     window.removeEventListener('mousemove', handleMouseMove);
-    //     window.removeEventListener('mouseup', handleMouseUp);
-    // };
     const handleMouseDown = () => {
         isDragging.current = true;
         window.addEventListener('mousemove', handleMouseMove);

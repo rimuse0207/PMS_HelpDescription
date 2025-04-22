@@ -9,6 +9,8 @@ import {
     Change_Menu_Contents_Editor_State,
     Initial_Menu_Contents_Editor_State,
 } from '../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
+import ReactQuill, { Quill } from 'react-quill-new';
+
 const HelpsContentsMainDivBox = styled.div`
     width: 100%;
     max-height: calc(100vh - 70px);
@@ -23,6 +25,9 @@ const HelpsContentsMainDivBox = styled.div`
 const MenuContentsContainerDivBox = styled.div`
     padding: 10px;
     padding-right: 20px;
+    .ql-disabled {
+        border: none;
+    }
     .Title_Group {
         font-size: 2em;
         font-weight: 500;
@@ -87,7 +92,19 @@ const HelpsContents = () => {
                     <p>PMS 도움말 입니다.</p>
                 ) : (
                     Content_State.map(list => {
-                        return <div style={{ padding: '30px' }}>{parse(list?.pms_content_info_content.replaceAll('_blank', '_self'))}</div>;
+                        return (
+                            <div style={{ paddingLeft: '30px' }}>
+                                <ReactQuill
+                                    style={{ width: '100%', background: '#fefefe' }}
+                                    theme="snow"
+                                    value={list ? list.pms_content_info_content.replaceAll('_blank', '_self') : ''}
+                                    // modules={QuillModules}
+                                    // formats={formats}
+                                    modules={{ toolbar: false }}
+                                    readOnly={true}
+                                />
+                            </div>
+                        );
                     })
                 )}
                 <div className="Lines"></div>
