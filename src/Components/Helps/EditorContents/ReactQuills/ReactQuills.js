@@ -10,6 +10,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Change_Menu_Contents_Editor_State } from '../../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 import QuillImageDropAndPaste from 'quill-image-drop-and-paste';
 
+const Link = Quill.import('formats/link');
+class CustomLink extends Link {
+    static create(value) {
+        let node = super.create(value);
+        value = this.sanitize(value);
+        node.setAttribute('href', value);
+        node.setAttribute('target', '_self'); // 무조건 _self로
+        node.setAttribute('rel', 'noopener noreferrer'); // 보안상 추가해주자
+        return node;
+    }
+}
 const fontSizeArr = ['8px', '9px', '10px', '14px', '16px', '20px', '24px', '32px', '42px', '54px', '68px', '84px', '98px'];
 const SizeStyle = Quill.import('attributors/style/size');
 SizeStyle.whitelist = fontSizeArr;
@@ -17,6 +28,7 @@ Quill.register(SizeStyle, true);
 Quill.register('modules/imageDropAndPaste', QuillImageDropAndPaste);
 const Font = Quill.import('attributors/class/font');
 Font.whitelist = ['arial', 'buri', 'gangwon'];
+Quill.register(CustomLink, true);
 Quill.register(Font, true);
 
 Quill.register('modules/imageResize', ImageResize);
@@ -69,6 +81,16 @@ const ReactQuills = ({ setHeight }) => {
 
                         if (url) {
                             quill.format('link', url);
+                            // 여기 추가! 만들어진 a 태그를 찾아서 target="_self"로 바꿔줌
+                            setTimeout(() => {
+                                const [leaf] = quill.getLeaf(range.index);
+                                if (leaf) {
+                                    const DOMNode = leaf.domNode.parentNode; // a 태그
+                                    if (DOMNode && DOMNode.tagName === 'A') {
+                                        DOMNode.setAttribute('target', '_self');
+                                    }
+                                }
+                            }, 0);
                         } else {
                             quill.format('link', false);
                         }
@@ -92,11 +114,33 @@ const ReactQuills = ({ setHeight }) => {
             clipboard: {
                 matchers: [
                     [
+                        'span',
+                        (node, delta) => {
+                            const fontSize = node.style.fontSize;
+                            if (fontSize) {
+                                delta.ops.forEach(op => {
+                                    if (!op.attributes) op.attributes = {};
+                                    op.attributes.size = fontSize;
+                                });
+                            }
+                            return delta;
+                        },
+                    ],
+                    [
                         'P',
                         (node, delta) => {
-                            // 기존 P 태그의 속성을 유지하면서 새 줄을 추가
-                            const previousFormat = quillRef.current?.getEditor()?.getFormat();
-                            return delta.compose(new Delta().retain(delta.length(), previousFormat));
+                            // 기존 node의 스타일을 읽어서 Delta에 적용하는 방식으로 수정
+                            const fontSize = node.style.fontSize;
+                            const color = node.style.color;
+                            const newDelta = delta;
+
+                            newDelta.ops.forEach(op => {
+                                if (!op.attributes) op.attributes = {};
+                                if (fontSize) op.attributes.size = fontSize;
+                                if (color) op.attributes.color = color;
+                            });
+
+                            return newDelta;
                         },
                     ],
                 ],

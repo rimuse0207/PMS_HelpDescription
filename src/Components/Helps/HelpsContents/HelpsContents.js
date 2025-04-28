@@ -98,8 +98,6 @@ const HelpsContents = () => {
                                     style={{ width: '100%', background: '#fefefe' }}
                                     theme="snow"
                                     value={list ? list.pms_content_info_content.replaceAll('_blank', '_self') : ''}
-                                    // modules={QuillModules}
-                                    // formats={formats}
                                     modules={{ toolbar: false }}
                                     readOnly={true}
                                 />
