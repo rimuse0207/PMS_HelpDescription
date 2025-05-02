@@ -10,6 +10,8 @@ import {
     Initial_Menu_Contents_Editor_State,
 } from '../../../Models/MenuReducers/MenuContentsEditorReducer/MenuContentsEditorReducer';
 import ReactQuill, { Quill } from 'react-quill-new';
+import RecentContents from './RecentContents/RecentContents';
+import SearchRankContent from './RecentContents/SearchRankContent';
 
 const HelpsContentsMainDivBox = styled.div`
     width: 100%;
@@ -88,12 +90,15 @@ const HelpsContents = () => {
             <FindParent></FindParent>
             <MenuContentsContainerDivBox>
                 <h2 className="Title_Group">{Title === 'TOP' ? 'PMS 도움말' : Title}</h2>
-                {Code === 'TOP' ? (
-                    <p>PMS 도움말 입니다.</p>
+                {Code === 'TOP' || !Code ? (
+                    <div>
+                        <RecentContents></RecentContents>
+                        <SearchRankContent></SearchRankContent>
+                    </div>
                 ) : (
                     Content_State.map(list => {
                         return (
-                            <div style={{ paddingLeft: '30px' }}>
+                            <div style={{ paddingLeft: '30px' }} key={list.menu_name}>
                                 <ReactQuill
                                     style={{ width: '100%', background: '#fefefe' }}
                                     theme="snow"

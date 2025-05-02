@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ParentTree from './TreeMenu/ParentTree';
 import { Request_Get_Axios, Request_Post_Axios } from '../../../API/index';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MenuSidefetchData } from '../../../Models/ReduxThunks/MenuReduxThunks/SideMenuListReducerThunks';
@@ -10,37 +10,29 @@ import { Logout_Inistate_State_Func } from '../../../Models/LoginReducers/LoginI
 import DeleteConfrimModal from '../../Modal/DeleteConfrimModal';
 import { Change_Side_Menu_Width_Func } from '../../../Models/MenuReducers/SideMenuWidthReducer/SideMenuWidthReducer';
 
-// 애니메이션: 메뉴가 나타날 때와 사라질 때
-const fadeIn = keyframes`
-  0% {
-    opacity: 1;
-    transform: translateX(0px); /* 왼쪽에서부터 슬라이드 */
-    display:block;
-    width: 300px;
-  }
+// 동적 width를 받아서 keyframes 생성
+const fadeIn = width => keyframes`
+
   100% {
     opacity: 1;
     transform: translateX(0);
-    display:block;
-    width: 300px;
+    width: ${width}px;
   }
 `;
 
-const fadeOut = keyframes`
+const fadeOut = width => keyframes`
   0% {
     opacity: 1;
     transform: translateX(0);
-    display:block;
-    width: 300px;
+    width: ${width}px;
   }
   100% {
     opacity: 0;
-    
-    transform: translateX(-300px); /* 왼쪽으로 슬라이드 */
+    transform: translateX(-${width}px);
     width: 0;
-    display:none;
   }
 `;
+
 const SideNavigationMainPageMainDivBox = styled.div`
     border: 1px solid lightgray;
     height: calc(100vh - 80px);
@@ -48,8 +40,14 @@ const SideNavigationMainPageMainDivBox = styled.div`
     overflow-y: auto;
     margin-top: 10px;
     padding-left: 10px;
-    /* animation: ${props => (props.show ? fadeIn : fadeOut)} 0.3s ease-in forwards; */
-    /* animation: ${({ show, isInitialized }) => (isInitialized ? (show ? fadeIn : fadeOut) : 'none')} 0.3s ease-in forwards; */
+
+    /*동적 width 기반 애니메이션 적용 */
+    animation: ${({ show, width, isInitialized }) =>
+        isInitialized
+            ? css`
+                  ${show ? fadeIn(width) : fadeOut(width)} 0.3s ease-in-out forwards
+              `
+            : 'none'};
 
     .Button_Group {
         margin-top: 5px;
@@ -153,7 +151,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
             Navigation(`/admin/Menu/Default/TOP/TOP/TOP/TOP`);
         }
     };
-
+    // ADMIN 메뉴 생성
     const Admin_Contents = () => {
         if (Login_Info_State) {
             if (Login_Info_State.id) {
@@ -173,10 +171,11 @@ const SideNavigationMainPage = ({ clickAccess }) => {
         }
     };
 
+    /// 로그아웃
     const Handle_Submit_Logout = () => {
         dispatch(Logout_Inistate_State_Func());
     };
-
+    // ADMIN 메뉴 생성
     const Amdin_Menu_Update = () => {
         if (Login_Info_State) {
             if (Login_Info_State.id) {
@@ -203,6 +202,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
         }
     };
 
+    // 메뉴 크기 조절 함수들 ======
     const handleMouseDown = () => {
         isDragging.current = true;
         window.addEventListener('mousemove', handleMouseMove);
@@ -225,6 +225,7 @@ const SideNavigationMainPage = ({ clickAccess }) => {
             window.removeEventListener('mouseup', handleMouseUp);
         }
     };
+    // ===================================================
 
     return (
         <SideMenuMainContainers className="Side_Menus_Container">

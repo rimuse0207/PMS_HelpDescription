@@ -17,7 +17,7 @@ class CustomLink extends Link {
         value = this.sanitize(value);
         node.setAttribute('href', value);
         node.setAttribute('target', '_self'); // 무조건 _self로
-        node.setAttribute('rel', 'noopener noreferrer'); // 보안상 추가해주자
+        node.setAttribute('rel', 'noopener noreferrer');
         return node;
     }
 }

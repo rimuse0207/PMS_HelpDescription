@@ -4,7 +4,7 @@ import parse from 'html-react-parser';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const SearchContentsMainDivBox = styled.div`
+export const SearchContentsMainDivBox = styled.div`
     padding: 10px;
     width: 100%;
     max-height: calc(100vh - 70px);
@@ -60,7 +60,7 @@ const SearchContents = () => {
             </div>
             {Search_State.map(list => {
                 return (
-                    <div className="Contents_Group" onClick={e => HandleClicKMoveToDescript(e, list)}>
+                    <div key={list.menu_name} className="Contents_Group" onClick={e => HandleClicKMoveToDescript(e, list)}>
                         <h3>{list.menu_name}</h3>
                         {list.pms_content_info_content ? (
                             <div className="Content_Container" style={{ fontSize: '10px !important' }}>
